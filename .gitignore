@@ -1,0 +1,47 @@
+# Fichiers et dossiers générés par Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Environnement virtuel
+env/
+venv/
+ENV/
+*.env
+
+# Configuration des éditeurs de code
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+
+# Logs et bases de données
+*.log
+*.sqlite3
+*.db
+
+# Dépendances
+*.egg
+*.egg-info/
+dist/
+build/
+*.wheel
+
+# Fichiers de test
+.coverage
+*.coverage.*
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Fichiers générés par les systèmes d'exploitation
+.DS_Store
+Thumbs.db
+
+# Données sensibles ou volumineuses
+data/raw/
+data/processed/
+models/
+reports/
