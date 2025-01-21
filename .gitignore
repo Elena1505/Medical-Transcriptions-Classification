@@ -45,3 +45,6 @@ data/raw/
 data/processed/
 models/
 reports/
+
+
+__init__.py
