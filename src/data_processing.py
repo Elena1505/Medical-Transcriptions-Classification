@@ -35,13 +35,19 @@ def stop_word(lst_words:List[str]):
     return filtered_lst_words
 
 
+def lowercase(lst_words:List[str]):
+    lowercase_words = [w.lower() for w in lst_words]
+    return lowercase_words
+
+
 def cleaned_sentences(df:DataFrame):
     lst_words = []
     for i in range(len(df)):
         description = df.loc[i, 'transcription']
         tokenized = tokenize_sentences(description)
         stopped = stop_word(tokenized)
+        lowercased = lowercase(stopped)
 
-        lst_words.append(stopped)
+        lst_words.append(lowercased)
     df['lst_words'] = lst_words
     return df
