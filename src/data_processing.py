@@ -1,8 +1,15 @@
 import pandas as pd 
 from pandas import DataFrame
+from typing import List
+
+# NLTK
 import nltk 
-nltk.download('punkt_tab')
 from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+
+nltk.download('punkt_tab')
+nltk.download('stopwords')
 
 
 def filter_data(df:DataFrame):
@@ -21,11 +28,20 @@ def tokenize_sentences(sentence:str):
     return word_tokens
 
 
+def stop_word(lst_words:List[str]):
+    stop = list(set(stopwords.words('english'))) + ['[', ']', ',', '.', ':', '?', '(', ')', '!']
+    filtered_lst_words = [w for w in lst_words if not w in stop]
+    filtered_lst_words = [w for w in filtered_lst_words if len(w) > 2]
+    return filtered_lst_words
+
+
 def cleaned_sentences(df:DataFrame):
     lst_words = []
     for i in range(len(df)):
         description = df.loc[i, 'transcription']
-        bow_result = tokenize_sentences(description)
-        lst_words.append(bow_result)
+        tokenized = tokenize_sentences(description)
+        stopped = stop_word(tokenized)
+
+        lst_words.append(stopped)
     df['lst_words'] = lst_words
     return df

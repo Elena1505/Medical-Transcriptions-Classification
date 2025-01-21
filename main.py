@@ -16,8 +16,8 @@ def main():
     filtred_df = filter_data(df=first_df)
     cleaned_df = process_null_values(df=filtred_df)
     cleaned_df = cleaned_sentences(df=cleaned_df)
-    print(cleaned_df.iloc[5, 'transcription'])
-    
+    print(cleaned_df)
+
 
 
 if __name__ == "__main__":
