@@ -1,6 +1,7 @@
 import pandas as pd 
 from pandas import DataFrame
 from typing import List
+import os 
 
 # NLTK
 import nltk 
@@ -10,6 +11,7 @@ from nltk.stem import WordNetLemmatizer
 
 nltk.download('punkt_tab')
 nltk.download('stopwords')
+nltk.download('wordnet')
 
 
 def filter_data(df:DataFrame):
@@ -40,14 +42,22 @@ def lowercase(lst_words:List[str]):
     return lowercase_words
 
 
-def cleaned_sentences(df:DataFrame):
+def lemmatize(lst_words:List[str]) :
+    lemmatizer = WordNetLemmatizer()
+    lemmatized_words = [lemmatizer.lemmatize(w) for w in lst_words]
+    return lemmatized_words
+
+
+def cleaned_sentences(df:DataFrame, path:str):
     lst_words = []
     for i in range(len(df)):
         description = df.loc[i, 'transcription']
         tokenized = tokenize_sentences(description)
         stopped = stop_word(tokenized)
         lowercased = lowercase(stopped)
-
-        lst_words.append(lowercased)
-    df['lst_words'] = lst_words
+        lemmatized = lemmatize(lowercased)
+        lst_words.append(lemmatized)
+    df['cleaned_transcription'] = lst_words
+    with open(os.path.join(path, 'mtsamples.csv'), 'w') as f:
+        f.write(df.to_csv(index=False))
     return df

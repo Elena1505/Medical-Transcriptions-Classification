@@ -6,6 +6,7 @@ def main():
 
     raw_data_path = '/home/lelou1505/DS/medical_transcription/data/raw/mtsamples.csv'
     fig_path = '/home/lelou1505/DS/medical_transcription/reports'
+    processed_data_path = '/home/lelou1505/DS/medical_transcription/data/processed'
 
     # Data exploring 
     first_df = describe(raw_path=raw_data_path, figure_path=fig_path)
@@ -15,9 +16,7 @@ def main():
     # Data processing 
     filtred_df = filter_data(df=first_df)
     cleaned_df = process_null_values(df=filtred_df)
-    cleaned_df = cleaned_sentences(df=cleaned_df)
-    print(cleaned_df)
-
+    cleaned_df = cleaned_sentences(df=cleaned_df, path=processed_data_path)
 
 
 if __name__ == "__main__":
