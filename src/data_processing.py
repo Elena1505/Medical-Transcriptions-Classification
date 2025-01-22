@@ -2,6 +2,8 @@ import pandas as pd
 from pandas import DataFrame
 from typing import List
 import os 
+import re 
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 # NLTK
 import nltk 
@@ -42,7 +44,7 @@ def lowercase(lst_words:List[str]):
     return lowercase_words
 
 
-def lemmatize(lst_words:List[str]) :
+def lemmatize(lst_words:List[str]):
     lemmatizer = WordNetLemmatizer()
     lemmatized_words = [lemmatizer.lemmatize(w) for w in lst_words]
     return lemmatized_words
@@ -61,3 +63,11 @@ def cleaned_sentences(df:DataFrame, path:str):
     with open(os.path.join(path, 'mtsamples.csv'), 'w') as f:
         f.write(df.to_csv(index=False))
     return df
+
+
+def bag_of_word(df:DataFrame):
+    vectorizer = TfidfVectorizer(analyzer='word', stop_words='english', max_df=0.7, min_df=1)
+    df['cleaned_transcription'] = df['cleaned_transcription'].apply(lambda x: ' '.join(x) if isinstance(x, list) else x)
+    tfidf = vectorizer.fit_transform(df['cleaned_transcription'])
+    features_name = sorted(vectorizer.get_feature_names_out())
+    return features_name

@@ -3,3 +3,4 @@ tabulate
 seaborn 
 matplotlib
 nltk
+scikit-learn

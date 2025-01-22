@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import os 
 
 
-def describe(raw_path: str, figure_path:str): 
+def read_data(raw_path: str, figure_path:str): 
     df = pd.read_csv(raw_path)
     with open(os.path.join(figure_path, 'data.md'), 'w') as f:
         f.write(df.to_markdown(index=False))    
