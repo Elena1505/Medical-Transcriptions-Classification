@@ -1,9 +1,15 @@
-import pandas as pd 
+import numpy as np 
+
 from pandas import DataFrame
 from typing import List
 import os 
 import re 
+import gc 
+
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.manifold import TSNE
+from sklearn.cluster import KMeans 
+from sklearn import metrics
 
 # NLTK
 import nltk 
@@ -50,6 +56,12 @@ def lemmatize(lst_words:List[str]):
     return lemmatized_words
 
 
+def remove_repeated_letter_words(lst_words:List[str]):
+    pattern = r'\b([a-zA-Z])\1+\b'
+    cleaned_text = [re.sub(pattern, '', text) for text in lst_words]
+    return cleaned_text
+
+
 def cleaned_sentences(df:DataFrame, path:str):
     lst_words = []
     for i in range(len(df)):
@@ -58,7 +70,8 @@ def cleaned_sentences(df:DataFrame, path:str):
         stopped = stop_word(tokenized)
         lowercased = lowercase(stopped)
         lemmatized = lemmatize(lowercased)
-        lst_words.append(lemmatized)
+        removed_repeated_letter = remove_repeated_letter_words(lemmatized)
+        lst_words.append(removed_repeated_letter)
     df['cleaned_transcription'] = lst_words
     with open(os.path.join(path, 'mtsamples.csv'), 'w') as f:
         f.write(df.to_csv(index=False))
@@ -69,5 +82,19 @@ def bag_of_word(df:DataFrame):
     vectorizer = TfidfVectorizer(analyzer='word', stop_words='english', max_df=0.7, min_df=1)
     df['cleaned_transcription'] = df['cleaned_transcription'].apply(lambda x: ' '.join(x) if isinstance(x, list) else x)
     tfidf = vectorizer.fit_transform(df['cleaned_transcription'])
-    features_name = sorted(vectorizer.get_feature_names_out())
-    return features_name
+    return tfidf
+
+
+
+def ARI_fct(tfidf, df:DataFrame) :
+    categ = list(set(df['medical_specialty']))
+    categ_num = [(1-categ.index(df.iloc[i]['medical_specialty'])) for i in range(len(df))]
+
+    num_labels = len(categ)
+    tsne = TSNE(n_components = 2, perplexity = 53, n_iter = 2000, init = 'random', learning_rate = 200, random_state=42)
+    X_tsne = tsne.fit_transform(tfidf)
+    
+    cls = KMeans(n_clusters = num_labels, n_init=100, random_state=42)
+    cls.fit(X_tsne)
+    ARI = np.round(metrics.adjusted_rand_score(categ_num, cls.labels_),4)
+    return ARI, X_tsne, cls.labels_

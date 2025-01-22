@@ -18,7 +18,7 @@ def main():
     cleaned_df = process_null_values(df=filtred_df)
     cleaned_df = cleaned_sentences(df=cleaned_df, path=processed_data_path)
 
-    print(len(bag_of_word(df=cleaned_df)))
+    print(bag_of_word(df=cleaned_df))
 
 
 if __name__ == "__main__":
