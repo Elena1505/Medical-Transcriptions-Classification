@@ -1,4 +1,5 @@
 import numpy as np 
+import matplotlib.pyplot as plt
 
 from pandas import DataFrame
 from typing import List
@@ -98,3 +99,24 @@ def ARI_fct(tfidf, df:DataFrame) :
     cls.fit(X_tsne)
     ARI = np.round(metrics.adjusted_rand_score(categ_num, cls.labels_),4)
     return ARI, X_tsne, cls.labels_
+
+
+def TSNE_visu_fct(df:DataFrame, X_tsne, labels, ARI, figure_path:str) :
+    fig = plt.figure(figsize=(15,6))
+
+    categ = list(set(df['medical_specialty']))
+    categ_num = [(1-categ.index(df.iloc[i]['medical_specialty'])) for i in range(len(df))]
+    
+    ax = fig.add_subplot(121)
+    scatter = ax.scatter(X_tsne[:,0],X_tsne[:,1], c = categ_num, cmap='Set1')
+    ax.legend(handles = scatter.legend_elements()[0], labels = categ, loc = "best", title = "Categorie")
+    plt.title('Représentation des articles par catégories réelles')
+    
+    ax = fig.add_subplot(122)
+    scatter = ax.scatter(X_tsne[:,0],X_tsne[:,1], c = labels, cmap='Set1')
+    ax.legend(handles = scatter.legend_elements()[0], labels = set(labels), loc = "best", title = "Clusters")
+    plt.title('Représentation des articles par clusters')
+
+    plt.savefig(os.path.join(figure_path, 'TSNE.png'))
+    plt.close()
+    print("ARI : ", ARI)
